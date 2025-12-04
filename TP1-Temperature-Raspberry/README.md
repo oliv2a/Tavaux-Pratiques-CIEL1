@@ -4,7 +4,7 @@
 
 **Type d'activité :** Mini-projet  
 **Durée :** 10 heures  
-**Type d'évaluation :** Mini oral (5 minutes de présentation + 5 minutes de questions)
+**Type d'évaluation :** Mini oral (5 minutes de présentation + 5 minutes de questions), préparer une présentation multimédia
 
 ---
 
@@ -13,7 +13,7 @@
 À l'issue de ce TP, vous serez capable de :
 
 - Configurer et utiliser un Raspberry Pi Zero
-- Interfacer un capteur I2C (AHT10)
+- Interfacer un capteur I2C (BME680)
 - Créer et gérer une base de données MySQL
 - Développer un script Python pour l'acquisition de données
 - Automatiser des tâches avec Crontab
@@ -24,9 +24,9 @@
 
 ## 🛠️ Matériel nécessaire
 
-- **Raspberry Pi Zero** avec son image système
-- **Capteur de température et humidité AHT10** (interface I2C)
-- **Câbles de connexion** (GPIO)
+- **[Raspberry Pi Zero](https://www.raspberrypi.com/products/raspberry-pi-zero-w/)** avec son image système (à préparer; voir tuto )
+- **[Capteur de température et humidité BME680](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/) ** (interface I2C)
+- ** [Carte HUB Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/) **
 - **Accès réseau** (WiFi ou Ethernet)
 - **Tablette Android** (pour la partie App Inventor)
 
@@ -35,7 +35,7 @@
 ## 📡 Informations de connexion
 
 **Raspberry Pi Zero :**
-- **Adresse IP :** 192.168.1.151
+- **Adresse IP :** Demander au professeur
 - **Utilisateur :** pi
 - **Mot de passe :** raspberry
 - **Protocole :** SSH (port 22)
