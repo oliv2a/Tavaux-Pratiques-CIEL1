@@ -48,7 +48,7 @@
 ### Partie 1 : Configuration initiale du Raspberry Pi
 
 #### Tâche 1 : Démarrage et vérification
-- [ ] Ecrire la carte avec PiImager (Voir Tuto : [Créer une image Raspberry Pi avec Raspberry Pi Imager](/guides-etudiants/tuto-raspberry-pi-imager.md) )
+- [ ] Ecrire la carte avec Pi Imager 
 - [ ] Démarrer le Raspberry Pi Zero
 - [ ] Vérifier que le système démarre correctement
 - [ ] Noter l'adresse IP si elle diffère
@@ -60,7 +60,7 @@
 
 **Commande Linux/Mac :**
 ```bash
-ssh pi@192.168.1.151
+ssh pi@192.168.1.XXX
 ```
 
 #### Tâche 3 : Configuration du proxy du lycée
@@ -145,36 +145,13 @@ lsmod | grep i2c
 
 **Installer les outils de détection I2C :**
 ```bash
-sudo apt install i2c-tools python3-smbus
-```
-
-**Installer les bibliothèques Python pour le capteur :**
-```bash
-pip3 install adafruit-circuitpython-ahtx0
-```
-
-ou
-
-```bash
 sudo apt install python3-pip
-pip3 install adafruit-blinka
-pip3 install adafruit-circuitpython-ahtx0
+pip3 install smbus2
 ```
-
----
 
 ### Partie 4 : Branchement et test du capteur
 
 #### Tâche 7 : Câblage du capteur AHT10
-
-**Schéma de connexion :**
-
-| Pin AHT10 | Pin Raspberry Pi Zero | Description |
-|-----------|----------------------|-------------|
-| VCC       | Pin 1 (3.3V)         | Alimentation |
-| GND       | Pin 6 (GND)          | Masse |
-| SDA       | Pin 3 (GPIO 2 - SDA) | Données I2C |
-| SCL       | Pin 5 (GPIO 3 - SCL) | Horloge I2C |
 
 **Détection du capteur sur le bus I2C :**
 ```bash
@@ -183,33 +160,9 @@ sudo i2cdetect -y 1
 
 Vous devriez voir l'adresse du capteur (généralement `0x38` ou `0x39`).
 
-**Script de test Python :**
-
-Créer le fichier `test_capteur.py` :
-```python
-import time
-import board
-import adafruit_ahtx0
-
-# Initialiser le capteur
-i2c = board.I2C()
-sensor = adafruit_ahtx0.AHTx0(i2c)
-
-# Lire et afficher les valeurs
-while True:
-    temperature = sensor.temperature
-    humidity = sensor.relative_humidity
-    
-    print(f"Température: {temperature:.1f}°C")
-    print(f"Humidité: {humidity:.1f}%")
-    print("-" * 30)
-    
-    time.sleep(2)
-```
-
 **Exécuter le test :**
 ```bash
-python3 test_capteur.py
+python3 test-bme680-smbus.py
 ```
 
 ---
@@ -266,19 +219,82 @@ EXIT;
 
 #### Tâche 9 : Création du script d'acquisition
 
-**Installer le connecteur MySQL pour Python :**
+**Étape 1 : Créer et activer un environnement virtuel Python**
+
+Un environnement virtuel permet d'isoler les dépendances du projet.
 ```bash
-pip3 install mysql-connector-python
+# Créer l'environnement virtuel dans le dossier du projet
+python3 -m venv ~/projet_capteur/venv
+
+# Activer l'environnement virtuel
+source ~/projet_capteur/venv/bin/activate
 ```
 
+Une fois activé, votre prompt devrait afficher `(venv)` au début.
+
+**Étape 2 : Installer le connecteur MySQL pour Python**
+
+**Option A : Installation depuis le fichier fourni (recommandé)**
+
+Si le fichier `.whl` est fourni dans le dossier `Fichiers/` :
+```bash
+# Se placer dans le dossier du projet
+cd ~/projet_capteur
+
+# Installer depuis le fichier local
+pip install Fichiers/mysql_connector_python-9.4.0-py2.py3-none-any.whl
+```
+
+**Option B : Installation depuis internet**
+
+Si vous avez accès à internet :
+```bash
+pip install mysql-connector-python
+```
+
+**Vérification de l'installation :**
+```bash
+pip list | grep mysql
+```
+
+Vous devriez voir : `mysql-connector-python    9.4.0`
+
+**Étape 3 : Installer les autres dépendances nécessaires**
+```bash
+# Pour le capteur BME680
+pip install smbus2
+
+# Vérifier toutes les installations
+pip list
+```
+
+**Note importante :** Pour toutes les prochaines sessions, n'oubliez pas d'activer l'environnement virtuel avant de lancer vos scripts :
+```bash
+source ~/projet_capteur/venv/bin/activate
+python3 enregistrer_mesure.py
+```
+
+**Pour désactiver l'environnement virtuel :**
+```bash
+deactivate
+```
 **Créer le fichier `enregistrer_mesure.py` :**
+
+Ce script utilise le module BME680 du fichier `test_bme680.py` fourni dans le dossier `Fichiers/`.
 ```python
 #!/usr/bin/env python3
-import time
-import board
-import adafruit_ahtx0
+"""
+Script d'acquisition et d'enregistrement des mesures du BME680
+Utilise le module BME680 personnalisé (test_bme680.py)
+"""
+
+import sys
 import mysql.connector
 from datetime import datetime
+
+# Importer la classe BME680 depuis le fichier fourni
+sys.path.insert(0, '/home/pi/projet_capteur/Fichiers')
+from test_bme680 import BME680
 
 # Configuration de la base de données
 db_config = {
@@ -289,13 +305,14 @@ db_config = {
 }
 
 def lire_capteur():
-    """Lit les valeurs du capteur AHT10"""
+    """Lit les valeurs du capteur BME680"""
     try:
-        i2c = board.I2C()
-        sensor = adafruit_ahtx0.AHTx0(i2c)
+        sensor = BME680()
+        temperature, humidite = sensor.read()
         
-        temperature = round(sensor.temperature, 1)
-        humidite = round(sensor.relative_humidity, 1)
+        # Arrondir à 1 décimale
+        temperature = round(temperature, 1)
+        humidite = round(humidite, 1)
         
         return temperature, humidite
     except Exception as e:
@@ -348,6 +365,21 @@ if __name__ == "__main__":
     main()
 ```
 
+**Note importante sur l'import :**
+
+Le script importe la classe `BME680` depuis le fichier `test_bme680.py` situé dans le dossier `Fichiers/`. Assurez-vous que :
+- Le fichier `test_bme680.py` est bien présent dans `/home/pi/projet_capteur/Fichiers/`
+- Le chemin est correct selon votre structure de projet
+
+**Alternative si les fichiers sont dans le même dossier :**
+
+Si vous placez `test_bme680.py` et `enregistrer_mesure.py` dans le même dossier, simplifiez l'import :
+```python
+# Remplacer les lignes 9-10 par :
+from test_bme680 import BME680
+```
+```
+
 **Rendre le script exécutable :**
 ```bash
 chmod +x enregistrer_mesure.py
@@ -371,19 +403,44 @@ mysql -u pi -p capteur_temp -e "SELECT * FROM mesures ORDER BY date_heure DESC L
 
 **Créer un script shell de lancement :**
 ```bash
-nano /home/pi/lancer_mesure.sh
+nano /home/pi/projet_capteur/lancer_mesure.sh
 ```
 
 **Contenu du script :**
 ```bash
 #!/bin/bash
-cd /home/pi
-/usr/bin/python3 /home/pi/enregistrer_mesure.py >> /home/pi/mesure.log 2>&1
+
+# Script de lancement automatique pour les mesures BME680
+# Active l'environnement virtuel et exécute le script Python
+
+# Se placer dans le répertoire du projet
+cd /home/pi/projet_capteur
+
+# Activer l'environnement virtuel
+source /home/pi/projet_capteur/venv/bin/activate
+
+# Exécuter le script Python
+python3 /home/pi/projet_capteur/enregistrer_mesure.py >> /home/pi/projet_capteur/mesure.log 2>&1
+
+# Désactiver l'environnement virtuel
+deactivate
 ```
 
-**Rendre exécutable :**
+**Rendre le script exécutable :**
 ```bash
-chmod +x /home/pi/lancer_mesure.sh
+chmod +x /home/pi/projet_capteur/lancer_mesure.sh
+```
+
+**Tester le script manuellement :**
+
+Avant de l'ajouter à crontab, vérifiez qu'il fonctionne :
+```bash
+/home/pi/projet_capteur/lancer_mesure.sh
+```
+
+Vérifiez le contenu du log :
+```bash
+cat /home/pi/projet_capteur/mesure.log
 ```
 
 **Éditer la crontab :**
@@ -393,7 +450,26 @@ crontab -e
 
 **Ajouter la ligne suivante (exécution toutes les minutes) :**
 ```bash
-* * * * * /home/pi/lancer_mesure.sh
+* * * * * /home/pi/projet_capteur/lancer_mesure.sh
+```
+
+**Explication de la syntaxe crontab :**
+- `* * * * *` = toutes les minutes (minute, heure, jour, mois, jour de la semaine)
+- Suivi du chemin complet vers le script
+
+**Exemples d'autres planifications :**
+```bash
+# Toutes les 5 minutes
+*/5 * * * * /home/pi/projet_capteur/lancer_mesure.sh
+
+# Toutes les 10 minutes
+*/10 * * * * /home/pi/projet_capteur/lancer_mesure.sh
+
+# Toutes les heures
+0 * * * * /home/pi/projet_capteur/lancer_mesure.sh
+
+# Tous les jours à 8h00
+0 8 * * * /home/pi/projet_capteur/lancer_mesure.sh
 ```
 
 **Vérifier que la tâche est active :**
@@ -401,13 +477,61 @@ crontab -e
 crontab -l
 ```
 
-**Consulter les logs :**
+Vous devriez voir votre ligne avec le script `lancer_mesure.sh`.
+
+**Consulter les logs en temps réel :**
 ```bash
-tail -f /home/pi/mesure.log
+tail -f /home/pi/projet_capteur/mesure.log
+```
+
+Pour arrêter l'affichage : `Ctrl+C`
+
+**Consulter les dernières lignes du log :**
+```bash
+tail -n 20 /home/pi/projet_capteur/mesure.log
+```
+
+**Vider le fichier de log (si nécessaire) :**
+```bash
+> /home/pi/projet_capteur/mesure.log
 ```
 
 **Test unitaire :**
-Attendre 2-3 minutes et vérifier que de nouvelles mesures apparaissent dans la BDD.
+
+1. Attendre 2-3 minutes après l'activation de crontab
+2. Vérifier que de nouvelles mesures apparaissent dans la BDD :
+```bash
+mysql -u pi -p capteur_temp -e "SELECT * FROM mesures ORDER BY date_heure DESC LIMIT 5;"
+```
+
+3. Vérifier le fichier de log :
+```bash
+tail -f /home/pi/projet_capteur/mesure.log
+```
+
+**Dépannage si ça ne fonctionne pas :**
+
+**Vérifier que cron est actif :**
+```bash
+sudo systemctl status cron
+```
+
+**Consulter les logs système de cron :**
+```bash
+grep CRON /var/log/syslog | tail -20
+```
+
+**Tester les permissions :**
+```bash
+ls -l /home/pi/projet_capteur/lancer_mesure.sh
+```
+
+Le fichier doit être exécutable (`-rwxr-xr-x`).
+
+**Vérifier que l'environnement virtuel existe :**
+```bash
+ls -la /home/pi/projet_capteur/venv/bin/activate
+```
 
 ---
 
@@ -722,7 +846,7 @@ Ouvrir dans un navigateur : `http://192.168.1.151/index.php`
 ```
 
 **Test :**
-Ouvrir dans un navigateur : `http://192.168.1.151/recherche.php`
+Ouvrir dans un navigateur : `http://192.168.1.XXX/recherche.php`
 
 ---
 
@@ -784,7 +908,7 @@ try {
 ```
 
 **Test de l'API :**
-Ouvrir : `http://192.168.1.151/api_mesure.php`
+Ouvrir : `http://192.168.1.XXX/api_mesure.php`
 
 **Étape 2 : Créer l'application sur App Inventor**
 
@@ -890,6 +1014,9 @@ ls -l /var/www/html/
 ---
 
 ## 📚 Ressources
+
+### Tutoriels
+- [Comment créer une image Raspberry Pi avec Pi Imager](https://github.com/oliv2a/guides-etudiants/blob/main/tuto-raspberry-pi-imager.md)
 
 ### Documentation
 - Consulter le dossier `Documents/` du TP
