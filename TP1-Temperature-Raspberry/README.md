@@ -48,6 +48,7 @@
 ### Partie 1 : Configuration initiale du Raspberry Pi
 
 #### Tâche 1 : Démarrage et vérification
+- [ ] Ecrire la carte avec PiImager (Voir Tuto : [Créer une image Raspberry Pi avec Raspberry Pi Imager](tuto-raspberry-pi-imager.md) )
 - [ ] Démarrer le Raspberry Pi Zero
 - [ ] Vérifier que le système démarre correctement
 - [ ] Noter l'adresse IP si elle diffère
