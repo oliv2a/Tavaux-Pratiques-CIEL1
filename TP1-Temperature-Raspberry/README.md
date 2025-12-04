@@ -24,9 +24,9 @@
 
 ## 🛠️ Matériel nécessaire
 
-- **[Raspberry Pi Zero](https://www.raspberrypi.com/products/raspberry-pi-zero-w/)** avec son image système (à préparer; voir tuto )
-- **[Capteur de température et humidité BME680](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/) ** (interface I2C)
-- **[Carte HUB Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/) **
+- [Raspberry Pi Zero](https://www.raspberrypi.com/products/raspberry-pi-zero-w/) avec son image système (à préparer; voir tuto )
+- [Capteur de température et humidité BME680](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/) (interface I2C)
+- [Carte HUB Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/) **
 - **Accès réseau** (WiFi ou Ethernet)
 - **Tablette Android** (pour la partie App Inventor)
 
