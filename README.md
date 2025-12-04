@@ -10,8 +10,8 @@ Bienvenue dans le dépôt des travaux pratiques du BTS CIEL première année. Ce
 
 | TP | Titre | Thème | Durée estimée |
 |----|-------|-------|---------------|
-| [TP1](TP1-Services-Web-Raspberry/) | Installation des services WEB sur Raspberry Pi | Apache, PHP, MySQL | 3h |
-| [TP2](TP2-Automatisation-Crontab/) | Automatisation avec Crontab | Planification de tâches | 2h |
+| [TP1](TP1-Temperature-Raspberry/) | Capteur de température et humidité connecté | Capteur AHT10, I2C, BDD, Web | 10h |
+| [TP2](TP2-Vitesse-Vent-Raspberry/) | Mesure de vitesse du vent avec interruption | Anémomètre, GPIO, Interruptions | 10h |
 
 ### Développement & Programmation
 
@@ -60,11 +60,14 @@ Les travaux pratiques de ce dépôt permettent de développer les compétences s
 - Carte SD (minimum 16 Go)
 - Alimentation 5V
 - Connexion réseau (Ethernet ou WiFi)
+- Analog Discovery 2 (ou 3)
 
 ### Logiciels
 - Raspberry Pi OS (anciennement Raspbian)
 - Connexion SSH configurée
 - Éditeur de texte (nano, vim, ou VSCode avec Remote SSH)
+- Visual Studio Code
+- Waveform
 
 ### Connaissances
 - Bases de Linux/terminal
@@ -158,23 +161,11 @@ Certains TPs peuvent faire l'objet d'une évaluation. Les critères d'évaluatio
 
 ---
 
-## 📅 Planning indicatif
-
-Les TPs sont conçus pour être réalisés dans l'ordre suggéré, mais peuvent être adaptés selon la progression du cours.
-
-| Semaine | TP | Thème |
-|---------|-----|-------|
-| S1-S2 | TP1 | Services Web sur Raspberry Pi |
-| S3 | TP2 | Automatisation avec Crontab |
-| S4-S5 | À définir | - |
-
----
-
 ## 👨‍🏫 À propos
 
 **Établissement** : BTS CIEL - Lycée Laetitia Bonaparte  
-**Année** : 2024-2025  
-**Enseignant** : [Votre nom]
+**Année** : 2025-2026  
+**Enseignant** : [Olivier WAILLY]
 
 ---
 
