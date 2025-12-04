@@ -24,7 +24,7 @@
 
 ## 🛠️ Matériel nécessaire
 
-- [Raspberry Pi Zero](https://www.raspberrypi.com/products/raspberry-pi-zero-w/) avec son image système (à préparer; voir tuto )
+- [Raspberry Pi Zero](https://www.raspberrypi.com/products/raspberry-pi-zero-w/) avec son image système (à préparer; voir tuto)
 - [Capteur de température et humidité BME680](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/) (interface I2C)
 - [Carte HUB Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)
 - [Github Seeed sur le BME680](https://github.com/Seeed-Studio/Seeed_Arduino_BME68x)
@@ -48,20 +48,22 @@
 ### Partie 1 : Configuration initiale du Raspberry Pi
 
 #### Tâche 1 : Démarrage et vérification
-- [ ] Ecrire la carte avec Pi Imager 
+- [ ] Écrire la carte avec Pi Imager (voir [tutoriel Pi Imager](https://github.com/oliv2a/guides-etudiants/blob/main/tuto-raspberry-pi-imager.md))
 - [ ] Démarrer le Raspberry Pi Zero
 - [ ] Vérifier que le système démarre correctement
-- [ ] Noter l'adresse IP si elle diffère
+- [ ] Noter l'adresse IP
 
 #### Tâche 2 : Connexion SSH
 - [ ] Ouvrir PuTTY (Windows) ou un terminal (Linux/Mac)
-- [ ] Se connecter en SSH à l'adresse IP : `192.168.1.151`
+- [ ] Se connecter en SSH à l'adresse IP fournie par le professeur
 - [ ] Utiliser les identifiants : `pi` / `raspberry`
 
 **Commande Linux/Mac :**
 ```bash
 ssh pi@192.168.1.XXX
 ```
+
+Remplacez `XXX` par l'adresse IP de votre Raspberry Pi.
 
 #### Tâche 3 : Configuration du proxy du lycée
 - [ ] Configurer le proxy pour permettre l'accès internet
@@ -111,8 +113,8 @@ sudo apt install phpmyadmin
 ```
 
 **Vérification :**
-- Tester Apache : ouvrir `http://192.168.1.151` dans un navigateur
-- Tester PHPMyAdmin : `http://192.168.1.151/phpmyadmin`
+- Tester Apache : ouvrir `http://192.168.1.XXX` dans un navigateur (remplacer par votre IP)
+- Tester PHPMyAdmin : `http://192.168.1.XXX/phpmyadmin`
 
 **Configurer les droits d'accès :**
 ```bash
@@ -145,25 +147,38 @@ lsmod | grep i2c
 
 **Installer les outils de détection I2C :**
 ```bash
-sudo apt install python3-pip
+sudo apt install i2c-tools python3-pip
 pip3 install smbus2
 ```
 
+---
+
 ### Partie 4 : Branchement et test du capteur
 
-#### Tâche 7 : Câblage du capteur AHT10
+#### Tâche 7 : Câblage du capteur BME680
+
+**Schéma de connexion avec Grove Base Hat :**
+
+Si vous utilisez le Grove Base Hat, branchez simplement le capteur BME680 sur l'un des ports I2C de la carte (généralement marqués I2C).
 
 **Détection du capteur sur le bus I2C :**
 ```bash
 sudo i2cdetect -y 1
 ```
 
-Vous devriez voir l'adresse du capteur (généralement `0x38` ou `0x39`).
+Vous devriez voir l'adresse du capteur BME680 (généralement `0x76` ou `0x77`).
+
+**Script de test Python :**
+
+Le fichier `test_bme680.py` est fourni dans le dossier `Fichiers/`.
 
 **Exécuter le test :**
 ```bash
-python3 test-bme680-smbus.py
+cd ~/projet_capteur/Fichiers
+python3 test_bme680.py
 ```
+
+Vous devriez voir s'afficher la température et l'humidité toutes les 2 secondes.
 
 ---
 
@@ -222,6 +237,7 @@ EXIT;
 **Étape 1 : Créer et activer un environnement virtuel Python**
 
 Un environnement virtuel permet d'isoler les dépendances du projet.
+
 ```bash
 # Créer l'environnement virtuel dans le dossier du projet
 python3 -m venv ~/projet_capteur/venv
@@ -237,6 +253,7 @@ Une fois activé, votre prompt devrait afficher `(venv)` au début.
 **Option A : Installation depuis le fichier fourni (recommandé)**
 
 Si le fichier `.whl` est fourni dans le dossier `Fichiers/` :
+
 ```bash
 # Se placer dans le dossier du projet
 cd ~/projet_capteur
@@ -248,11 +265,13 @@ pip install Fichiers/mysql_connector_python-9.4.0-py2.py3-none-any.whl
 **Option B : Installation depuis internet**
 
 Si vous avez accès à internet :
+
 ```bash
 pip install mysql-connector-python
 ```
 
 **Vérification de l'installation :**
+
 ```bash
 pip list | grep mysql
 ```
@@ -260,6 +279,7 @@ pip list | grep mysql
 Vous devriez voir : `mysql-connector-python    9.4.0`
 
 **Étape 3 : Installer les autres dépendances nécessaires**
+
 ```bash
 # Pour le capteur BME680
 pip install smbus2
@@ -269,18 +289,22 @@ pip list
 ```
 
 **Note importante :** Pour toutes les prochaines sessions, n'oubliez pas d'activer l'environnement virtuel avant de lancer vos scripts :
+
 ```bash
 source ~/projet_capteur/venv/bin/activate
 python3 enregistrer_mesure.py
 ```
 
 **Pour désactiver l'environnement virtuel :**
+
 ```bash
 deactivate
 ```
+
 **Créer le fichier `enregistrer_mesure.py` :**
 
 Ce script utilise le module BME680 du fichier `test_bme680.py` fourni dans le dossier `Fichiers/`.
+
 ```python
 #!/usr/bin/env python3
 """
@@ -374,23 +398,26 @@ Le script importe la classe `BME680` depuis le fichier `test_bme680.py` situé d
 **Alternative si les fichiers sont dans le même dossier :**
 
 Si vous placez `test_bme680.py` et `enregistrer_mesure.py` dans le même dossier, simplifiez l'import :
+
 ```python
 # Remplacer les lignes 9-10 par :
 from test_bme680 import BME680
 ```
-```
 
 **Rendre le script exécutable :**
+
 ```bash
 chmod +x enregistrer_mesure.py
 ```
 
 **Test unitaire :**
+
 ```bash
 python3 enregistrer_mesure.py
 ```
 
 **Vérifier l'enregistrement :**
+
 ```bash
 mysql -u pi -p capteur_temp -e "SELECT * FROM mesures ORDER BY date_heure DESC LIMIT 5;"
 ```
@@ -402,11 +429,13 @@ mysql -u pi -p capteur_temp -e "SELECT * FROM mesures ORDER BY date_heure DESC L
 #### Tâche 10 : Configuration de Crontab
 
 **Créer un script shell de lancement :**
+
 ```bash
 nano /home/pi/projet_capteur/lancer_mesure.sh
 ```
 
 **Contenu du script :**
+
 ```bash
 #!/bin/bash
 
@@ -427,6 +456,7 @@ deactivate
 ```
 
 **Rendre le script exécutable :**
+
 ```bash
 chmod +x /home/pi/projet_capteur/lancer_mesure.sh
 ```
@@ -434,21 +464,25 @@ chmod +x /home/pi/projet_capteur/lancer_mesure.sh
 **Tester le script manuellement :**
 
 Avant de l'ajouter à crontab, vérifiez qu'il fonctionne :
+
 ```bash
 /home/pi/projet_capteur/lancer_mesure.sh
 ```
 
 Vérifiez le contenu du log :
+
 ```bash
 cat /home/pi/projet_capteur/mesure.log
 ```
 
 **Éditer la crontab :**
+
 ```bash
 crontab -e
 ```
 
 **Ajouter la ligne suivante (exécution toutes les minutes) :**
+
 ```bash
 * * * * * /home/pi/projet_capteur/lancer_mesure.sh
 ```
@@ -458,6 +492,7 @@ crontab -e
 - Suivi du chemin complet vers le script
 
 **Exemples d'autres planifications :**
+
 ```bash
 # Toutes les 5 minutes
 */5 * * * * /home/pi/projet_capteur/lancer_mesure.sh
@@ -473,6 +508,7 @@ crontab -e
 ```
 
 **Vérifier que la tâche est active :**
+
 ```bash
 crontab -l
 ```
@@ -480,6 +516,7 @@ crontab -l
 Vous devriez voir votre ligne avec le script `lancer_mesure.sh`.
 
 **Consulter les logs en temps réel :**
+
 ```bash
 tail -f /home/pi/projet_capteur/mesure.log
 ```
@@ -487,11 +524,13 @@ tail -f /home/pi/projet_capteur/mesure.log
 Pour arrêter l'affichage : `Ctrl+C`
 
 **Consulter les dernières lignes du log :**
+
 ```bash
 tail -n 20 /home/pi/projet_capteur/mesure.log
 ```
 
 **Vider le fichier de log (si nécessaire) :**
+
 ```bash
 > /home/pi/projet_capteur/mesure.log
 ```
@@ -500,11 +539,13 @@ tail -n 20 /home/pi/projet_capteur/mesure.log
 
 1. Attendre 2-3 minutes après l'activation de crontab
 2. Vérifier que de nouvelles mesures apparaissent dans la BDD :
+
 ```bash
 mysql -u pi -p capteur_temp -e "SELECT * FROM mesures ORDER BY date_heure DESC LIMIT 5;"
 ```
 
 3. Vérifier le fichier de log :
+
 ```bash
 tail -f /home/pi/projet_capteur/mesure.log
 ```
@@ -540,6 +581,7 @@ ls -la /home/pi/projet_capteur/venv/bin/activate
 #### Tâche 11 : Création de la page d'accueil PHP
 
 **Créer le fichier `/var/www/html/index.php` :**
+
 ```php
 <!DOCTYPE html>
 <html lang="fr">
@@ -656,7 +698,7 @@ ls -la /home/pi/projet_capteur/venv/bin/activate
 ```
 
 **Test :**
-Ouvrir dans un navigateur : `http://192.168.1.151/index.php`
+Ouvrir dans un navigateur : `http://192.168.1.XXX/index.php` (remplacer par votre IP)
 
 ---
 
@@ -665,6 +707,7 @@ Ouvrir dans un navigateur : `http://192.168.1.151/index.php`
 #### Tâche 12 : Création de la page de recherche PHP
 
 **Créer le fichier `/var/www/html/recherche.php` :**
+
 ```php
 <!DOCTYPE html>
 <html lang="fr">
@@ -846,7 +889,7 @@ Ouvrir dans un navigateur : `http://192.168.1.151/index.php`
 ```
 
 **Test :**
-Ouvrir dans un navigateur : `http://192.168.1.XXX/recherche.php`
+Ouvrir dans un navigateur : `http://192.168.1.XXX/recherche.php` (remplacer par votre IP)
 
 ---
 
@@ -860,7 +903,8 @@ Ouvrir dans un navigateur : `http://192.168.1.XXX/recherche.php`
 
 **Étape 1 : Créer une API PHP**
 
-Créer le fichier `/var/www/html/api_mesure.php` :
+Créer le fichier `/var/
+www/html/api_mesure.php` :
 ```php
 <?php
 header('Content-Type: application/json');
@@ -908,7 +952,7 @@ try {
 ```
 
 **Test de l'API :**
-Ouvrir : `http://192.168.1.XXX/api_mesure.php`
+Ouvrir : `http://192.168.1.XXX/api_mesure.php` (remplacer par votre IP)
 
 **Étape 2 : Créer l'application sur App Inventor**
 
@@ -922,12 +966,12 @@ Ouvrir : `http://192.168.1.XXX/api_mesure.php`
    - Ajouter un `Clock` pour l'actualisation automatique
 
 4. **Blocks (Programmation) :**
-   - Au clic sur le bouton : appeler l'URL `http://192.168.1.151/api_mesure.php`
+   - Au clic sur le bouton : appeler l'URL `http://192.168.1.XXX/api_mesure.php` (remplacer par votre IP)
    - Quand `Web.GotText` : parser le JSON et afficher les valeurs
    - Configurer le `Clock` pour actualiser toutes les 60 secondes
 
 **Exemple de blocs simplifié :**
-- `When Button1.Click` → `set Web1.Url to "http://192.168.1.151/api_mesure.php"` → `call Web1.Get`
+- `When Button1.Click` → `set Web1.Url to "http://192.168.1.XXX/api_mesure.php"` (remplacer par votre IP) → `call Web1.Get`
 - `When Web1.GotText` → Parser le JSON et mettre à jour les labels
 
 **Installation :**
@@ -991,7 +1035,7 @@ mysql -u pi -p capteur_temp
 
 **Consulter les logs :**
 ```bash
-tail -f /home/pi/mesure.log
+tail -f /home/pi/projet_capteur/mesure.log
 ```
 
 **Vérifier que crontab fonctionne :**
@@ -1020,7 +1064,7 @@ ls -l /var/www/html/
 
 ### Documentation
 - Consulter le dossier `Documents/` du TP
-- [Documentation AHT10](https://learn.adafruit.com/adafruit-aht20)
+- [Documentation BME680](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/)
 - [Raspberry Pi GPIO](https://pinout.xyz)
 - [App Inventor Tutorials](https://appinventor.mit.edu/explore/ai2/tutorials)
 
@@ -1045,3 +1089,7 @@ Avant la présentation, vérifiez que :
 ---
 
 **Bon courage pour ce mini-projet ! 🚀**
+
+Désolé pour les erreurs ! Le TP1 est maintenant complètement corrigé avec **BME680** partout (plus aucune trace d'AHT10). 
+
+Les IP ont toutes été mises en XXX avec des rappels pour les remplacer.
