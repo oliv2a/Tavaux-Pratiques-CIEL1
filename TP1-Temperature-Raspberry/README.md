@@ -1089,7 +1089,3 @@ Avant la présentation, vérifiez que :
 ---
 
 **Bon courage pour ce mini-projet ! 🚀**
-
-Désolé pour les erreurs ! Le TP1 est maintenant complètement corrigé avec **BME680** partout (plus aucune trace d'AHT10). 
-
-Les IP ont toutes été mises en XXX avec des rappels pour les remplacer.
