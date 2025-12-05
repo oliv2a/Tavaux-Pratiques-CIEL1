@@ -23,14 +23,25 @@ Bienvenue dans le dépôt des travaux pratiques du BTS CIEL première année. Ce
 
 | TP | Titre | Thème | Durée estimée |
 |----|-------|-------|---------------|
-| À venir | - | - | - |
+| [TP5](TP5-Capteur-de-temperature-sans-fils-Xbee/) | Capteur de température avec liaison sans fil XBee | UART, I2C, XBee, Communication série | 10h |
 
 ### Systèmes & Infrastructure
 
 | TP | Titre | Thème | Durée estimée |
 |----|-------|-------|---------------|
 | [TP3](TP3-Installation-de-Linux/) | Installation de Linux sur PC | Ubuntu, LAMP, VSFTPD, Multi-utilisateurs | 10h |
----
+
+### Domotique & IoT
+
+| TP | Titre | Thème | Durée estimée |
+|----|-------|-------|---------------|
+| [TP4](TP4-Installation-centrale-Domotique/) | Installation centrale domotique Z-Wave | Eedomus, Capteurs, Automatisation, Sécurité | 10h |
+
+### Électronique & Instrumentation
+
+| TP | Titre | Thème | Durée estimée |
+|----|-------|-------|---------------|
+| [TP6](TP6-Soudage-Kit/) | Soudage et vérification d'un kit électronique | Soudage THT, Multimètre, Oscilloscope | 10h |
 
 ## 📁 Structure d'un TP
 
