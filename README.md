@@ -41,7 +41,7 @@ Bienvenue dans le dépôt des travaux pratiques du BTS CIEL première année. Ce
 
 | TP | Titre | Thème | Durée estimée |
 |----|-------|-------|---------------|
-| [TP6](TP6-Soudage-Kit/) | Soudage et vérification d'un kit électronique | Soudage THT, Multimètre, Oscilloscope | 10h |
+| [TP6](TP6-Soudage-kit/) | Soudage et vérification d'un kit électronique | Soudage THT, Multimètre, Oscilloscope | 10h |
 
 ## 📁 Structure d'un TP
 
