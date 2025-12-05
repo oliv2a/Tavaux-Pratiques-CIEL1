@@ -10,7 +10,7 @@ Bienvenue dans le dépôt des travaux pratiques du BTS CIEL première année. Ce
 
 | TP | Titre | Thème | Durée estimée |
 |----|-------|-------|---------------|
-| [TP1](TP1-Temperature-Raspberry/) | Capteur de température et humidité connecté | Capteur AHT10, I2C, BDD, Web | 10h |
+| [TP1](TP1-Temperature-Raspberry/) | Capteur de température et humidité connecté | Capteur BME680, I2C, BDD, Web | 10h |
 | [TP2](TP2-Vitesse-Vent-Raspberry/) | Mesure de vitesse du vent avec interruption | Anémomètre, GPIO, Interruptions | 10h |
 
 ### Développement & Programmation
@@ -25,6 +25,11 @@ Bienvenue dans le dépôt des travaux pratiques du BTS CIEL première année. Ce
 |----|-------|-------|---------------|
 | À venir | - | - | - |
 
+### Systèmes & Infrastructure
+
+| TP | Titre | Thème | Durée estimée |
+|----|-------|-------|---------------|
+| [TP3](TP3-Installation-Linux/) | Installation de Linux sur PC | Ubuntu, LAMP, VSFTPD, Multi-utilisateurs | 10h |
 ---
 
 ## 📁 Structure d'un TP
