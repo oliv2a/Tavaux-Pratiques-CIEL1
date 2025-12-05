@@ -29,7 +29,7 @@
 - **Résistance de pull-up 10kΩ** (si non intégrée)
 - **Câbles de connexion** (jumpers)
 - **Oscilloscope Analog Discovery 2 (AD2)**
-- **Générateur de signaux** (pour la calibration)
+- **Générateur de signaux** (AD2 : pour la calibration)
 
 ---
 
