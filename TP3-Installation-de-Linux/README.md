@@ -213,7 +213,7 @@ ping -c 3 google.com
 
 Pour cette tâche, suivez le tutoriel complet :
 
-**📚 [Tutoriel Installation LAMP](https://github.com/oliv2a/guides-etudiants/blob/main/installation-lamp-ubuntu.md)**
+**📚 [Tutoriel Installation LAMP](https://github.com/oliv2a/guides-etudiants/blob/main/tuto-lamp-ubuntu.md)**
 
 Ce tutoriel couvre :
 - ✅ Installation d'Apache2
@@ -268,7 +268,7 @@ sudo systemctl restart mariadb
 
 Pour cette tâche, suivez le tutoriel complet :
 
-**📚 [Tutoriel Installation VSFTPD](https://github.com/oliv2a/guides-etudiants/blob/main/installation-vsftpd-linux.md)**
+**📚 [Tutoriel Installation VSFTPD](https://github.com/oliv2a/guides-etudiants/blob/main/tuto-vsftpd-linux.md)**
 
 Ce tutoriel couvre :
 - ✅ Installation de VSFTPD
@@ -529,8 +529,8 @@ sudo mysql -u root -p
 
 ### Tutoriels du dépôt guides-etudiants
 
-- **[Installation LAMP complète](https://github.com/oliv2a/guides-etudiants/blob/main/installation-lamp-ubuntu.md)**
-- **[Installation VSFTPD complète](https://github.com/oliv2a/guides-etudiants/blob/main/installation-vsftpd-linux.md)**
+- **[Installation LAMP complète](https://github.com/oliv2a/guides-etudiants/blob/main/tuto-lamp-ubuntu.md)**
+- **[Installation VSFTPD complète](https://github.com/oliv2a/guides-etudiants/blob/main/tuto-vsftpd-linux.md)**
 
 ### Documentation officielle
 
