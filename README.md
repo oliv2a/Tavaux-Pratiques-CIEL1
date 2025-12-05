@@ -29,7 +29,7 @@ Bienvenue dans le dépôt des travaux pratiques du BTS CIEL première année. Ce
 
 | TP | Titre | Thème | Durée estimée |
 |----|-------|-------|---------------|
-| [TP3](TP3-Installation-Linux/) | Installation de Linux sur PC | Ubuntu, LAMP, VSFTPD, Multi-utilisateurs | 10h |
+| [TP3](TP3-Installation-de-Linux/) | Installation de Linux sur PC | Ubuntu, LAMP, VSFTPD, Multi-utilisateurs | 10h |
 ---
 
 ## 📁 Structure d'un TP
