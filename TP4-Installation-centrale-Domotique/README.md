@@ -43,8 +43,8 @@
 
 **Plateforme Eedomus :**
 - **URL** : [https://secure.eedomus.com/](https://secure.eedomus.com/)
-- **Utilisateur** : `olivier.wailly@yahoo.fr`
-- **Mot de passe** : `btsciel1llb`
+- **Utilisateur** : `email_connexion@xxx.fr`
+- **Mot de passe** : `M_D_P`
 
 ⚠️ **Important** : Ces identifiants sont partagés. Nommez clairement vos périphériques pour les identifier.
 
@@ -59,8 +59,8 @@
 1. Ouvrez un navigateur web
 2. Accédez à : [https://secure.eedomus.com/](https://secure.eedomus.com/)
 3. Entrez les identifiants :
-   - **Email** : `olivier.wailly@yahoo.fr`
-   - **Mot de passe** : `btsciel1llb`
+   - **Email** : `email_connexion@xxx.fr`
+   - **Mot de passe** : `M_D_P`
 4. Cliquez sur **"Se connecter"**
 
 #### Interface principale
