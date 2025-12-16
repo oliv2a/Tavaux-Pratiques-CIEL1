@@ -69,14 +69,14 @@ Un anémomètre est un capteur mesurant la vitesse du vent à l'aide de coupelle
 
 | Anémomètre | Raspberry Pi | Description |
 |------------|--------------|-------------|
-| Fil 1 (signal) | GPIO 17 (Pin 11) | Signal de sortie |
+| Fil 1 (signal) | GPIO 4 (Pin 7) | Signal de sortie |
 | Fil 2 (GND) | GND (Pin 6) | Masse commune |
 | 3,3V | Pin 1 (3.3V) | Via résistance 10kΩ |
 
 **Schéma détaillé :**
 - Connecter une extrémité de la résistance 10kΩ au 3,3V
-- Connecter l'autre extrémité à GPIO 17
-- Connecter un fil de l'anémomètre à GPIO 17
+- Connecter l'autre extrémité à GPIO 4
+- Connecter un fil de l'anémomètre à GPIO 4
 - Connecter l'autre fil de l'anémomètre à GND
 
 **⚠️ Important :** Noter le GPIO choisi pour la suite du TP.
@@ -95,7 +95,7 @@ Un anémomètre est un capteur mesurant la vitesse du vent à l'aide de coupelle
 **Procédure :**
 
 1. **Connecter l'oscilloscope AD2 :**
-   - Canal 1 : GPIO 17 (signal)
+   - Canal 1 : GPIO 4 (signal)
    - GND : GND commun
 
 2. **Lancer WaveForms (logiciel AD2)**
@@ -214,7 +214,7 @@ import RPi.GPIO as GPIO
 import time
 
 # Configuration
-GPIO_PIN = 17  # GPIO utilisé pour l'anémomètre
+GPIO_PIN = 4  # GPIO utilisé pour l'anémomètre
 K_AERO = 2.4   # Coefficient aérodynamique
 
 # Variables globales
@@ -312,7 +312,7 @@ python3 mesure_vent_instant.py
 1. **Déconnecter l'anémomètre** du GPIO
 
 2. **Connecter le générateur AD2 :**
-   - Sortie W1 du générateur → GPIO 17
+   - Sortie W1 du générateur → GPIO 4
    - GND → GND commun
 
 3. **Configurer WaveForms :**
@@ -362,7 +362,7 @@ import time
 from collections import deque
 
 # Configuration
-GPIO_PIN = 17
+GPIO_PIN = 4
 K_AERO = 2.4
 WINDOW_SIZE = 10  # Nombre de valeurs pour la moyenne
 
