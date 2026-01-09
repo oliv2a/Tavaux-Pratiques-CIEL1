@@ -12,6 +12,7 @@ Bienvenue dans le dépôt des travaux pratiques du BTS CIEL première année. Ce
 |----|-------|-------|---------------|
 | [TP1](TP1-Temperature-Raspberry/) | Capteur de température et humidité connecté | Capteur BME680, I2C, BDD, Web | 10h |
 | [TP2](TP2-Vitesse-Vent-Raspberry/) | Mesure de vitesse du vent avec interruption | Anémomètre, GPIO, Interruptions | 10h |
+| [TP10](TP2-SMS_avec_le_Raspberry/) | Module GSM SIM800C et contrôle d'arrosage par SMS | Emission & réception de SMS, programmes python, application Androïd | 10h |
 
 ### Développement & Programmation
 
