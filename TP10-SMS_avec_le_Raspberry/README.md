@@ -2,7 +2,7 @@
 
 ## 📋 Informations générales
 
-**Durée estimée :** 12 heures  
+**Durée estimée :** 10 heures  
 **Niveau :** Intermédiaire/Avancé  
 **Prérequis :**
 - Connaissances de base en Python
