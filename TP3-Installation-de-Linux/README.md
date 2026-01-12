@@ -46,7 +46,7 @@ Installer Ubuntu 22.04.3 LTS avec deux utilisateurs :
 
 **Créer la clé USB bootable :**
 - Utilisez **Rufus** (Windows) ou **Balena Etcher** (multiplateforme)
-- Suivez le [tutoriel officiel](https://ubuntu.com/tutorials/create-a-usb-stick-on-windows) ou en français [Créer / flasher une clé USB bootable]([https://ubuntu.com/tutorials/create-a-usb-stick-on-windows](https://doc.ubuntu-fr.org/tutoriel/usb-creator)
+- Suivez le [tutoriel officiel](https://ubuntu.com/tutorials/create-a-usb-stick-on-windows) ou en français [Créer / flasher une clé USB bootable]([https://ubuntu.com/tutorials/create-a-usb-stick-on-windows)(https://doc.ubuntu-fr.org/tutoriel/usb-creator)
 
 #### Procédure d'installation
 
