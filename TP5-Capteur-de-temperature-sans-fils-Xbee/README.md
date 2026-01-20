@@ -154,7 +154,7 @@ python3 test_uart_tx.py
 **Test 2 : Mesure de la trame avec l'AD2**
 
 1. **Connecter l'AD2** :
-   - Canal 1+ (orange) : GPIO 14 (TX) - Pin 8
+   - Canal 0 (rose) : GPIO 14 (TX) - Pin 8
    - GND (noir) : GND - Pin 6
 
 2. **Ouvrir WaveForms**
