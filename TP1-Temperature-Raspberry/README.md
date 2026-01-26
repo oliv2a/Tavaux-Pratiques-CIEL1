@@ -70,14 +70,12 @@ Remplacez `XXX` par l'adresse IP de votre Raspberry Pi.
 
 **Éditer le fichier de configuration :**
 ```bash
-sudo nano /etc/environment
+sudo nano /etc/apt/apt.conf.d/proxy
 ```
 
-**Ajouter les lignes suivantes (adapter selon votre proxy) :**
+**Ajouter la ligne suivante (adapter selon votre proxy) :**
 ```bash
-http_proxy="http://proxy.lycee:port/"
-https_proxy="http://proxy.lycee:port/"
-no_proxy="localhost,127.0.0.1"
+Acquire::http::Proxy "http://172.16.160.100:3130";
 ```
 
 **Redémarrer pour appliquer :**
@@ -1089,3 +1087,4 @@ Avant la présentation, vérifiez que :
 ---
 
 **Bon courage pour ce mini-projet ! 🚀**
+
