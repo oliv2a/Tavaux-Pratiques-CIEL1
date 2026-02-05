@@ -122,13 +122,15 @@ Le logiciel `AT_Console.py` permet de communiquer facilement avec le module GSM.
 
 #### Installation et configuration
 
-Créez le fichier `AT_Console.py` :
+Créez le fichier `AT_Console_sms.py` :
 
 ```python
 #!/usr/bin/env python3
 import serial
 import time
 import sys
+import termios
+import tty
 
 # Configuration du port série
 PORT = "/dev/ttyS0"
@@ -143,6 +145,7 @@ class ATConsole:
             print("=" * 50)
             print("Console AT pour SIM800C")
             print("Tapez vos commandes AT (Ctrl+C pour quitter)")
+            print("Pour envoyer un SMS : utilisez F10 au lieu de Ctrl+Z")
             print("=" * 50)
         except Exception as e:
             print(f"✗ Erreur de connexion : {e}")
@@ -165,6 +168,64 @@ class ATConsole:
         except Exception as e:
             return f"Erreur : {e}"
     
+    def read_multiline_input(self):
+        """Lecture en mode multiligne pour les SMS"""
+        print("Mode SMS activé. Tapez votre message.")
+        print("Appuyez sur F10 pour envoyer (Ctrl+Z)")
+        print("-" * 50)
+        
+        # Sauvegarde des paramètres du terminal
+        old_settings = termios.tcgetattr(sys.stdin)
+        
+        try:
+            # Mode raw pour capturer F10
+            tty.setraw(sys.stdin.fileno())
+            
+            message = ""
+            
+            while True:
+                char = sys.stdin.read(1)
+                
+                # Détection de F10 : séquence ESC[21~
+                if char == '\x1b':  # ESC
+                    seq = sys.stdin.read(2)
+                    if seq == '[2':
+                        next_char = sys.stdin.read(1)
+                        if next_char == '1':
+                            final = sys.stdin.read(1)
+                            if final == '~':
+                                # F10 détecté, envoyer Ctrl+Z
+                                sys.stdout.write('\n')
+                                sys.stdout.flush()
+                                return message + '\x1A'  # Ajout du Ctrl+Z
+                
+                # Ctrl+C pour annuler
+                elif char == '\x03':
+                    raise KeyboardInterrupt
+                
+                # Backspace
+                elif char == '\x7f':
+                    if message:
+                        message = message[:-1]
+                        sys.stdout.write('\b \b')
+                        sys.stdout.flush()
+                
+                # Entrée
+                elif char == '\r' or char == '\n':
+                    sys.stdout.write('\r\n')
+                    sys.stdout.flush()
+                    message += '\n'
+                
+                # Caractère normal
+                elif ord(char) >= 32:
+                    message += char
+                    sys.stdout.write(char)
+                    sys.stdout.flush()
+        
+        finally:
+            # Restauration des paramètres du terminal
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+    
     def run(self):
         """Boucle principale de la console"""
         while True:
@@ -175,9 +236,32 @@ class ATConsole:
                 if not cmd:
                     continue
                 
-                # Envoi et affichage de la réponse
-                response = self.send_command(cmd)
-                print(response)
+                # Détection du mode SMS
+                if cmd.upper().startswith("AT+CMGS"):
+                    # Envoi de la commande AT+CMGS
+                    response = self.send_command(cmd)
+                    print(response)
+                    
+                    # Si le module répond avec >, passer en mode saisie SMS
+                    if '>' in response:
+                        # Lecture du message en mode multiligne
+                        message = self.read_multiline_input()
+                        
+                        # Envoi du message
+                        self.ser.write(message.encode())
+                        time.sleep(5)  # Attendre l'envoi
+                        
+                        # Lecture de la réponse
+                        response = ""
+                        while self.ser.in_waiting:
+                            response += self.ser.read(self.ser.in_waiting).decode(errors='ignore')
+                            time.sleep(0.1)
+                        
+                        print(response)
+                else:
+                    # Commande AT normale
+                    response = self.send_command(cmd)
+                    print(response)
                 
             except KeyboardInterrupt:
                 print("\n\n✓ Fermeture de la console")
@@ -525,143 +609,57 @@ Dans cette partie, nous allons créer trois programmes Python pour :
 Créez le fichier `envoyer_sms.py` :
 
 ```python
-#!/usr/bin/env python3
-"""
-Programme d'envoi de SMS via SIM800C
-Auteur : Votre nom
-Date : 2025-01-10
-"""
-
 import serial
 import time
-import sys
 
-# Configuration
-PORT = "/dev/ttyS0"
-BAUDRATE = 115200
-TIMEOUT = 1
+# Configuration du port série
+port = "/dev/ttyS0"
+baudrate = 115200
 
 def envoyer_sms(numero, message):
-    """
-    Envoie un SMS à un numéro donné
-    
-    Args:
-        numero (str): Numéro de téléphone au format international (ex: +33612345678)
-        message (str): Contenu du message à envoyer
-    
-    Returns:
-        bool: True si envoi réussi, False sinon
-    """
     try:
         # Connexion au module SIM800C
-        print(f"📡 Connexion au module sur {PORT}...")
-        ser = serial.Serial(PORT, BAUDRATE, timeout=TIMEOUT)
-        time.sleep(2)  # Attendre que le module soit prêt
+        ser = serial.Serial(port, baudrate, timeout=1)
+        time.sleep(2)
         
-        # Test de communication
-        print("🔧 Test de communication...")
+        print("Test de communication...")
         ser.write(b'AT\r')
         time.sleep(0.5)
-        reponse = ser.read(ser.in_waiting).decode(errors='ignore')
-        if "OK" not in reponse:
-            print("✗ Le module ne répond pas correctement")
-            return False
-        print("✓ Module OK")
+        print(ser.read(ser.in_waiting).decode())
         
-        # Configuration en mode texte
-        print("🔧 Configuration en mode texte...")
+        # Mode texte pour les SMS
+        print("Configuration mode texte...")
         ser.write(b'AT+CMGF=1\r')
         time.sleep(0.5)
-        reponse = ser.read(ser.in_waiting).decode(errors='ignore')
-        if "OK" not in reponse:
-            print("✗ Erreur de configuration")
-            return False
-        print("✓ Mode texte activé")
+        print(ser.read(ser.in_waiting).decode())
         
         # Envoi du numéro de destination
-        print(f"📤 Envoi vers {numero}...")
-        commande = f'AT+CMGS="{numero}"\r'
-        ser.write(commande.encode())
+        print(f"Envoi vers {numero}...")
+        ser.write(f'AT+CMGS="{numero}"\r'.encode())
         time.sleep(0.5)
-        reponse = ser.read(ser.in_waiting).decode(errors='ignore')
-        
-        if ">" not in reponse:
-            print("✗ Le module n'est pas prêt à recevoir le message")
-            print(f"Réponse : {reponse}")
-            return False
+        print(ser.read(ser.in_waiting).decode())
         
         # Envoi du message (terminer par Ctrl+Z = caractère 26)
-        print(f"✍️  Message : {message}")
-        ser.write(message.encode())
-        ser.write(b'\x1A')  # Ctrl+Z
+        ser.write(f'{message}\x1A'.encode())
+        time.sleep(5)  # Attendre l'envoi
+        reponse = ser.read(ser.in_waiting).decode()
+        print(reponse)
         
-        # Attendre la confirmation (peut prendre plusieurs secondes)
-        print("⏳ Envoi en cours...")
-        time.sleep(5)
-        reponse = ser.read(ser.in_waiting).decode(errors='ignore')
-        
-        # Vérifier la réussite
-        if "+CMGS:" in reponse and "OK" in reponse:
-            print("✅ SMS envoyé avec succès !")
-            print(f"Réponse : {reponse.strip()}")
-            ser.close()
-            return True
+        if "+CMGS:" in reponse:
+            print("✓ SMS envoyé avec succès !")
         else:
             print("✗ Erreur lors de l'envoi")
-            print(f"Réponse : {reponse}")
-            ser.close()
-            return False
         
-    except serial.SerialException as e:
-        print(f"✗ Erreur de connexion série : {e}")
-        return False
+        ser.close()
+        
     except Exception as e:
-        print(f"✗ Erreur inattendue : {e}")
-        return False
+        print(f"Erreur : {e}")
 
-def main():
-    """Fonction principale"""
-    print("=" * 60)
-    print("Programme d'envoi de SMS - SIM800C")
-    print("=" * 60)
-    
-    # Configuration du destinataire et du message
-    # ⚠️ IMPORTANT : Remplacez par votre numéro de test
-    numero_destination = "+33612345678"
-    message = "Test d'envoi SMS depuis Raspberry Pi avec SIM800C"
-    
-    # Affichage des paramètres
-    print(f"\n📋 Paramètres :")
-    print(f"   - Destinataire : {numero_destination}")
-    print(f"   - Message : {message}")
-    print(f"   - Port série : {PORT}")
-    print(f"   - Vitesse : {BAUDRATE} bauds\n")
-    
-    # Confirmation
-    reponse = input("Voulez-vous envoyer ce SMS ? (o/n) : ")
-    if reponse.lower() != 'o':
-        print("❌ Envoi annulé")
-        return
-    
-    # Envoi du SMS
-    print()
-    succes = envoyer_sms(numero_destination, message)
-    
-    if succes:
-        print("\n🎉 Opération terminée avec succès")
-    else:
-        print("\n❌ L'opération a échoué")
-        print("💡 Vérifiez :")
-        print("   - La connexion de la carte SIM800C")
-        print("   - Le crédit SMS de votre carte SIM")
-        print("   - Le signal réseau (AT+CSQ)")
+# Test
+numero_destination = "+33612345678"  # Remplace par ton numéro
+message = "Test SMS depuis Raspberry Pi"
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n\n⚠️  Programme interrompu par l'utilisateur")
-        sys.exit(0)
+envoyer_sms(numero_destination, message)
 ```
 
 #### Test du programme
@@ -679,38 +677,18 @@ python3 envoyer_sms.py
 Créez le fichier `recevoir_sms.py` :
 
 ```python
-#!/usr/bin/env python3
-"""
-Programme de réception et lecture de SMS via SIM800C
-Auteur : Votre nom
-Date : 2025-01-10
-"""
-
 import serial
 import time
-import sys
-import re
 
-# Configuration
-PORT = "/dev/ttyS0"
-BAUDRATE = 115200
-TIMEOUT = 1
+port = "/dev/ttyS0"
+baudrate = 115200
 
-def recevoir_sms():
-    """
-    Lit tous les SMS stockés sur la carte SIM
-    
-    Returns:
-        list: Liste de dictionnaires contenant les SMS
-    """
+def lire_sms():
     try:
-        # Connexion au module
-        print(f"📡 Connexion au module sur {PORT}...")
-        ser = serial.Serial(PORT, BAUDRATE, timeout=TIMEOUT)
+        ser = serial.Serial(port, baudrate, timeout=1)
         time.sleep(2)
         
-        # Configuration en mode texte
-        print("🔧 Configuration en mode texte...")
+        # Mode texte
         ser.write(b'AT+CMGF=1\r')
         time.sleep(0.5)
         ser.read(ser.in_waiting)
@@ -720,81 +698,20 @@ def recevoir_sms():
         time.sleep(0.5)
         ser.read(ser.in_waiting)
         
-        # Lecture de tous les SMS
-        print("📬 Lecture des SMS...\n")
+        # Lire tous les SMS
+        print("Lecture des SMS...\n")
         ser.write(b'AT+CMGL="ALL"\r')
         time.sleep(2)
         
         reponse = ser.read(ser.in_waiting).decode(errors='ignore')
+        print(reponse)
+        
         ser.close()
         
-        # Analyse de la réponse
-        liste_sms = []
-        
-        # Regex pour extraire les SMS
-        # Format : +CMGL: index,"status","numero","","date,heure"
-        pattern = r'\+CMGL: (\d+),"([^"]+)","([^"]+)","[^"]*","([^"]+)"\r\n(.+?)(?=\r\n\+CMGL|\r\n\r\nOK)'
-        
-        matches = re.finditer(pattern, reponse, re.DOTALL)
-        
-        for match in matches:
-            sms = {
-                'index': match.group(1),
-                'statut': match.group(2),
-                'numero': match.group(3),
-                'date': match.group(4),
-                'message': match.group(5).strip()
-            }
-            liste_sms.append(sms)
-        
-        return liste_sms
-        
     except Exception as e:
-        print(f"✗ Erreur : {e}")
-        return []
+        print(f"Erreur : {e}")
 
-def afficher_sms(liste_sms):
-    """
-    Affiche les SMS de manière formatée
-    
-    Args:
-        liste_sms (list): Liste des SMS à afficher
-    """
-    if not liste_sms:
-        print("📭 Aucun SMS en mémoire")
-        return
-    
-    print(f"📨 {len(liste_sms)} SMS trouvé(s) :\n")
-    print("=" * 70)
-    
-    for sms in liste_sms:
-        print(f"📩 SMS #{sms['index']} - {sms['statut']}")
-        print(f"   De : {sms['numero']}")
-        print(f"   Date : {sms['date']}")
-        print(f"   Message : {sms['message']}")
-        print("-" * 70)
-
-def main():
-    """Fonction principale"""
-    print("=" * 60)
-    print("Programme de réception de SMS - SIM800C")
-    print("=" * 60)
-    print()
-    
-    # Réception des SMS
-    liste_sms = recevoir_sms()
-    
-    # Affichage
-    afficher_sms(liste_sms)
-    
-    print("\n✅ Opération terminée")
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n\n⚠️  Programme interrompu par l'utilisateur")
-        sys.exit(0)
+lire_sms()
 ```
 
 #### Test du programme
@@ -956,8 +873,8 @@ Les relais permettent de contrôler les électrovannes d'arrosage :
 
 | Composant | GPIO | Pin | Fonction |
 |-----------|------|-----|----------|
-| Relais 1 | GPIO 16 | Pin 36 | Électrovanne 1 |
-| Relais 2 | GPIO 26 | Pin 37 | Électrovanne 2 |
+| Relais 1 | GPIO 17 | Pin 11 | Électrovanne 1 |
+| Relais 2 | GPIO 27 | Pin 13 | Électrovanne 2 |
 | GND | GND | Pin 39 | Masse commune |
 | VCC | 5V | Pin 2 | Alimentation relais |
 
@@ -978,8 +895,8 @@ import time
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-RELAIS_1 = 16
-RELAIS_2 = 26
+RELAIS_1 = 17
+RELAIS_2 = 27
 
 # Initialisation des GPIO en sortie
 GPIO.setup(RELAIS_1, GPIO.OUT)
