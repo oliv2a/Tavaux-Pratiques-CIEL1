@@ -28,7 +28,7 @@
 
 ## Durée estimée
 
-6 heures (sur 2 séances)
+10 heures 
 
 ---
 
@@ -44,11 +44,8 @@
 2. Flasher la carte SD avec Raspberry Pi Imager :
    - https://www.raspberrypi.com/software/
 
-3. Avant le premier démarrage, configurer SSH :
-```bash
-   # Dans le boot de la carte SD, créer un fichier vide nommé 'ssh'
-   touch /boot/ssh
-```
+3. Avant le premier lancer pi imager :
+   - configurer SSH et wifi externe
 
 **Premier démarrage et configuration de base**
 
@@ -60,6 +57,8 @@
 ```
 
 6. Mettre à jour le système :
+   - Si utilisation du réseau du lycée, configurer le proxy
+
 ```bash
    sudo apt update
    sudo apt upgrade -y
@@ -224,7 +223,7 @@ Docker est une plateforme de conteneurisation qui permet d'isoler des applicatio
 
 ## Partie 2 : Câblage du réseau VoIP
 
-### 2.1 Schéma de câblage
+### 2.1 Schéma de câblage ( voir image dans Documents )
 
 Réaliser le câblage selon le schéma fourni :
 ```
@@ -525,7 +524,7 @@ Réseau principal (192.168.1.0/24)
 **Accès à l'interface**
 
 1. Depuis le PC, accéder à : http://192.169.0.1
-2. Login : admin / admin (ou selon configuration)
+2. Login : admin / admin (ou btsciel1)
 
 **Configuration WAN**
 
@@ -775,4 +774,5 @@ docker compose exec fusionpbx /bin/bash
 
 **Version :** 1.0  
 **Date :** Février 2025  
+
 **Auteur :** Olivier - BTS CIEL
