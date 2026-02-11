@@ -96,7 +96,7 @@ Réseau principal (ex: 192.168.1.0/24)
 **Configuration Wi-Fi**
 
 12. Menu : **Wireless** → **Basic Settings**
-    - SSID : **CEI1**
+    - SSID : **CIEL1**
 13. Menu : **Wireless** → **Wireless Security**
     - Mot de passe : **btsciellllb2a**
 14. **Save**
